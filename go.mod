@@ -1,4 +1,4 @@
-module github.com/Terisback/dao-tg
+module github.com/MoonSHRD/dao-tg
 
 go 1.18
 
