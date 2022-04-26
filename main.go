@@ -9,8 +9,8 @@ import (
 	"go.uber.org/fx/fxevent"
 	"go.uber.org/zap"
 
-	"github.com/MoonSHRD/dao-tg/pkg/config"
-	"github.com/MoonSHRD/dao-tg/pkg/logger"
+	"github.com/MoonSHRD/dao-tg/config"
+	"github.com/MoonSHRD/dao-tg/logger"
 	"github.com/gotd/contrib/bg"
 	"github.com/gotd/td/telegram"
 	"github.com/gotd/td/telegram/message"
