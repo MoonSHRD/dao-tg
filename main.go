@@ -10,6 +10,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/MoonSHRD/dao-tg/config"
+	"github.com/MoonSHRD/dao-tg/contract"
 	"github.com/MoonSHRD/dao-tg/logger"
 	"github.com/gotd/contrib/bg"
 	"github.com/gotd/td/telegram"
@@ -77,9 +78,10 @@ func main() {
 	var app *fx.App
 
 	app = fx.New(
+		config.Module,
+		logger.Module,
+		contract.Module,
 		fx.Provide(
-			logger.New,
-			config.New,
 			NewBot,
 		),
 		fx.Invoke(

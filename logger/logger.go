@@ -4,11 +4,12 @@ import (
 	"log"
 	"time"
 
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
-//New Logger
+// New Logger
 func New() *zap.Logger {
 	var err error
 
@@ -22,3 +23,6 @@ func New() *zap.Logger {
 
 	return logger
 }
+
+// Module ...
+var Module = fx.Module("logger", fx.Provide(New))

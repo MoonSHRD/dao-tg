@@ -60,3 +60,6 @@ func StringToInt(value string) int {
 	}
 	return i
 }
+
+// Module ...
+var Module = fx.Module("config", fx.Provide(New))
