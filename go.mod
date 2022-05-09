@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/akrylysov/pogreb v0.10.1
+	github.com/google/go-querystring v1.1.0
 	go.uber.org/fx v1.17.1
 	go.uber.org/zap v1.21.0
 	gopkg.in/telebot.v3 v3.0.0

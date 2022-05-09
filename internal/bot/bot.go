@@ -3,38 +3,34 @@ package bot
 import (
 	"context"
 	"encoding/json"
-	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/MoonSHRD/dao-tg/internal/config"
 	"github.com/MoonSHRD/dao-tg/internal/store"
-	"github.com/MoonSHRD/dao-tg/pkg/gnosis"
+	client "github.com/MoonSHRD/dao-tg/pkg/gnosis"
 	"go.uber.org/fx"
 	tg "gopkg.in/telebot.v3"
 )
 
 // RegisterHandler ...
-func RegisterHandler(b *tg.Bot, store store.Store) {
+func RegisterHandler(b *tg.Bot, gnosis *client.Gnosis, store store.Store) {
 	b.Handle(tg.OnText, func(c tg.Context) error {
 		return c.Send("Hello world!")
 	})
 
 	b.Handle("/transaction", func(ctx tg.Context) error {
 		args := ctx.Args()
-		if len(args) < 3 {
+		if len(args) < 1 {
 			return ctx.Reply("unsuffishent agrs")
 		}
 
-		typ := args[0]
-		safeAddr := args[1]
-		safeTx := args[2]
-
-		t, _, err := gnosis.GetTransaction(http.DefaultClient, typ, safeAddr, safeTx)
+		result, err := gnosis.MultisigTransaction(args[0])
 		if err != nil {
 			return ctx.Reply("failed" + err.Error())
 		}
 
-		nice, err := json.MarshalIndent(t, "", "\t")
+		nice, err := json.MarshalIndent(result, "", "\t")
 		if err != nil {
 			return ctx.Reply("failed" + err.Error())
 		}
@@ -47,19 +43,32 @@ func RegisterHandler(b *tg.Bot, store store.Store) {
 		if len(args) < 1 {
 			return ctx.Reply("unsuffishent agrs")
 		}
-		safeAddr := args[0]
 
-		t, _, err := gnosis.GetHistory(http.DefaultClient, safeAddr)
+		safe := args[0]
+
+		executed := true
+		queued := false
+		result, err := gnosis.Transactions(safe, client.TransactionOptions{
+			Executed: &executed,
+			Queued:   &queued,
+		})
 		if err != nil {
 			return ctx.Reply("failed" + err.Error())
 		}
 
-		nice, err := json.MarshalIndent(t, "", "\t")
-		if err != nil {
-			return ctx.Reply("failed" + err.Error())
+		var out string
+		for _, r := range result.Results {
+			switch r.TxType {
+			case client.TxTypeEtheriumTransaction:
+				out += "tx: " + r.TxHash[:10] + "\n\n"
+			case client.TxTypeMultisigTransaction:
+				out += "safe_tx: " + r.SafeTxHash[:10] + "\n"
+				out += "confirmations needed: " + strconv.FormatInt(*r.ConfirmationsRequired, 10) + "\n"
+				out += "confirmations: " + strconv.Itoa(len(r.Confirmations)) + "\n\n"
+			}
 		}
 
-		return ctx.Reply(string(nice))
+		return ctx.Reply(out)
 	})
 
 	b.Handle("/queue", func(ctx tg.Context) error {
@@ -67,19 +76,34 @@ func RegisterHandler(b *tg.Bot, store store.Store) {
 		if len(args) < 1 {
 			return ctx.Reply("unsuffishent agrs")
 		}
-		safeAddr := args[0]
 
-		t, _, err := gnosis.GetQueue(http.DefaultClient, safeAddr)
+		safe := args[0]
+
+		safeInfo, err := gnosis.Safe(safe)
 		if err != nil {
-			return ctx.Reply("failed" + err.Error())
+			return ctx.Reply("failed " + err.Error())
 		}
 
-		nice, err := json.MarshalIndent(t, "", "\t")
+		executed := false
+		result, err := gnosis.MultisigTransactions(safe, client.MultisigOptions{
+			Executed: &executed,
+		})
 		if err != nil {
-			return ctx.Reply("failed" + err.Error())
+			return ctx.Reply("failed " + err.Error())
 		}
 
-		return ctx.Reply(string(nice))
+		var out string
+		for _, r := range result.Results {
+			out += "safe_tx: " + r.SafeTxHash[:10] + "\n"
+			if safeInfo.Threshold > int64(len(r.Confirmations)) {
+				out += "confirmations needed: " + strconv.FormatInt(safeInfo.Threshold, 10) + "\n"
+				out += "confirmations: " + strconv.Itoa(len(r.Confirmations)) + "\n\n"
+			} else {
+				out += "needs execution" + "\n"
+			}
+		}
+
+		return ctx.Reply(out)
 	})
 }
 
