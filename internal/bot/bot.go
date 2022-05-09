@@ -8,8 +8,8 @@ import (
 	"github.com/MoonSHRD/dao-tg/internal/config"
 	"github.com/MoonSHRD/dao-tg/internal/store"
 	"github.com/MoonSHRD/dao-tg/pkg/gnosis/client"
+	"github.com/MoonSHRD/dao-tg/pkg/gnosis/client/multisig_transactions"
 	"github.com/MoonSHRD/dao-tg/pkg/gnosis/client/safes"
-	"github.com/MoonSHRD/dao-tg/pkg/gnosis/client/transactions"
 	"go.uber.org/fx"
 	tg "gopkg.in/telebot.v3"
 )
@@ -26,8 +26,8 @@ func RegisterHandler(b *tg.Bot, gnosis *client.Gnosis, store store.Store) {
 			return ctx.Reply("unsuffishent agrs")
 		}
 
-		params := transactions.NewTransactionsReadParams().WithSafeTxHash(args[0])
-		t, err := gnosis.Transactions.TransactionsRead(params, nil)
+		params := multisig_transactions.NewMultisigTransactionsReadParams().WithSafeTxHash(args[0])
+		t, err := gnosis.MultisigTransactions.MultisigTransactionsRead(params, nil)
 		if err != nil {
 			return ctx.Reply("failed" + err.Error())
 		}
@@ -46,14 +46,14 @@ func RegisterHandler(b *tg.Bot, gnosis *client.Gnosis, store store.Store) {
 			return ctx.Reply("unsuffishent agrs")
 		}
 
-		queued := false
-		params := safes.NewSafesAllTransactionsListParams().WithAddress(args[0]).WithQueued(&queued)
-		t, err := gnosis.Safes.SafesAllTransactionsList(params, nil)
+		executed := "true"
+		params := safes.NewSafesMultisigTransactionsListParams().WithDefaults().WithAddress(args[0]).WithExecuted(&executed)
+		t, err := gnosis.Safes.SafesMultisigTransactionsList(params, nil)
 		if err != nil {
 			return ctx.Reply("failed" + err.Error())
 		}
 
-		nice, err := json.MarshalIndent(t, "", "\t")
+		nice, err := json.MarshalIndent(t.GetPayload().Results, "", "\t")
 		if err != nil {
 			return ctx.Reply("failed" + err.Error())
 		}
@@ -67,14 +67,14 @@ func RegisterHandler(b *tg.Bot, gnosis *client.Gnosis, store store.Store) {
 			return ctx.Reply("unsuffishent agrs")
 		}
 
-		queued := true
-		params := safes.NewSafesAllTransactionsListParams().WithAddress(args[0]).WithQueued(&queued)
-		t, err := gnosis.Safes.SafesAllTransactionsList(params, nil)
+		executed := "false"
+		params := safes.NewSafesMultisigTransactionsListParams().WithDefaults().WithAddress(args[0]).WithExecuted(&executed)
+		t, err := gnosis.Safes.SafesMultisigTransactionsList(params, nil)
 		if err != nil {
 			return ctx.Reply("failed" + err.Error())
 		}
 
-		nice, err := json.MarshalIndent(t, "", "\t")
+		nice, err := json.MarshalIndent(t.GetPayload().Results, "", "\t")
 		if err != nil {
 			return ctx.Reply("failed" + err.Error())
 		}
