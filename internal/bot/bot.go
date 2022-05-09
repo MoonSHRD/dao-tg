@@ -3,33 +3,31 @@ package bot
 import (
 	"context"
 	"encoding/json"
-	"net/http"
 	"time"
 
 	"github.com/MoonSHRD/dao-tg/internal/config"
 	"github.com/MoonSHRD/dao-tg/internal/store"
-	"github.com/MoonSHRD/dao-tg/pkg/gnosis"
+	"github.com/MoonSHRD/dao-tg/pkg/gnosis/client"
+	"github.com/MoonSHRD/dao-tg/pkg/gnosis/client/safes"
+	"github.com/MoonSHRD/dao-tg/pkg/gnosis/client/transactions"
 	"go.uber.org/fx"
 	tg "gopkg.in/telebot.v3"
 )
 
 // RegisterHandler ...
-func RegisterHandler(b *tg.Bot, store store.Store) {
+func RegisterHandler(b *tg.Bot, gnosis *client.Gnosis, store store.Store) {
 	b.Handle(tg.OnText, func(c tg.Context) error {
 		return c.Send("Hello world!")
 	})
 
 	b.Handle("/transaction", func(ctx tg.Context) error {
 		args := ctx.Args()
-		if len(args) < 3 {
+		if len(args) < 1 {
 			return ctx.Reply("unsuffishent agrs")
 		}
 
-		typ := args[0]
-		safeAddr := args[1]
-		safeTx := args[2]
-
-		t, _, err := gnosis.GetTransaction(http.DefaultClient, typ, safeAddr, safeTx)
+		params := transactions.NewTransactionsReadParams().WithSafeTxHash(args[0])
+		t, err := gnosis.Transactions.TransactionsRead(params, nil)
 		if err != nil {
 			return ctx.Reply("failed" + err.Error())
 		}
@@ -47,9 +45,10 @@ func RegisterHandler(b *tg.Bot, store store.Store) {
 		if len(args) < 1 {
 			return ctx.Reply("unsuffishent agrs")
 		}
-		safeAddr := args[0]
 
-		t, _, err := gnosis.GetHistory(http.DefaultClient, safeAddr)
+		queued := false
+		params := safes.NewSafesAllTransactionsListParams().WithAddress(args[0]).WithQueued(&queued)
+		t, err := gnosis.Safes.SafesAllTransactionsList(params, nil)
 		if err != nil {
 			return ctx.Reply("failed" + err.Error())
 		}
@@ -67,9 +66,10 @@ func RegisterHandler(b *tg.Bot, store store.Store) {
 		if len(args) < 1 {
 			return ctx.Reply("unsuffishent agrs")
 		}
-		safeAddr := args[0]
 
-		t, _, err := gnosis.GetQueue(http.DefaultClient, safeAddr)
+		queued := true
+		params := safes.NewSafesAllTransactionsListParams().WithAddress(args[0]).WithQueued(&queued)
+		t, err := gnosis.Safes.SafesAllTransactionsList(params, nil)
 		if err != nil {
 			return ctx.Reply("failed" + err.Error())
 		}
