@@ -2,8 +2,6 @@
 package main
 
 import (
-	"net/http"
-
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
 	"go.uber.org/zap"
@@ -21,11 +19,6 @@ func main() {
 	app = fx.New(
 		config.Module,
 		logger.Module,
-		// TODO: Constructor for gnosis config
-		fx.Supply(gnosis.Config{
-			Base:   "https://safe-transaction.rinkeby.gnosis.io/api/v1",
-			Client: http.DefaultClient,
-		}),
 		gnosis.Module,
 		store.Module,
 		bot.Module,

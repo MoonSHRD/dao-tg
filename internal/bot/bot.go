@@ -15,9 +15,7 @@ import (
 
 // RegisterHandler ...
 func RegisterHandler(b *tg.Bot, gnosis *client.Gnosis, store store.Store) {
-	b.Handle(tg.OnText, func(c tg.Context) error {
-		return c.Send("Hello world!")
-	})
+	b.Use(ManageState(store))
 
 	b.Handle("/transaction", func(ctx tg.Context) error {
 		args := ctx.Args()
@@ -105,13 +103,15 @@ func RegisterHandler(b *tg.Bot, gnosis *client.Gnosis, store store.Store) {
 
 		return ctx.Reply(out)
 	})
+
+	RegisterSubscribePipeline(b, gnosis, store)
 }
 
 // New ...
 func New(lifecycle fx.Lifecycle, cfg config.Telegram) (*tg.Bot, error) {
 	b, err := tg.NewBot(tg.Settings{
 		Token:  cfg.BotToken,
-		Poller: &tg.LongPoller{Timeout: 10 * time.Second},
+		Poller: &tg.LongPoller{Timeout: 5 * time.Second},
 	})
 	if err != nil {
 		return nil, err

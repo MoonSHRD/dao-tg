@@ -2,6 +2,7 @@ package gnosis
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -11,17 +12,16 @@ import (
 	"go.uber.org/fx"
 )
 
+var (
+	ErrResponseNotOK = errors.New("status code is not 200")
+)
+
 var Module = fx.Module("gnosis", fx.Provide(
-	NewWithConfig,
+	New,
 ))
 
 // DefaultBase ...
 const DefaultBase = "https://safe-transaction.gnosis.io/api/v1"
-
-type Config struct {
-	Base   string
-	Client *http.Client
-}
 
 type Gnosis struct {
 	Base   string
@@ -35,10 +35,10 @@ func New() *Gnosis {
 	}
 }
 
-func NewWithConfig(config Config) *Gnosis {
+func (g *Gnosis) WithNetwork(network string) *Gnosis {
 	return &Gnosis{
-		Base:   config.Base,
-		Client: config.Client,
+		Base:   fmt.Sprintf("https://safe-transaction.%s.gnosis.io/api/v1", network),
+		Client: g.Client,
 	}
 }
 
@@ -161,16 +161,16 @@ func get[T any](client *http.Client, url string, result *T) error {
 	}
 	defer res.Body.Close()
 
+	if res.StatusCode != 200 {
+		return ErrResponseNotOK
+	}
+
 	data, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return err
 	}
 
-	if err := json.Unmarshal(data, result); err != nil {
-		return err
-	}
-
-	return err
+	return json.Unmarshal(data, result)
 }
 
 func values[T any](options ...T) (url.Values, error) {

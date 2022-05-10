@@ -28,7 +28,7 @@ func New(lifecycle fx.Lifecycle, bot *tg.Bot, store store.Store, logger *zap.Log
 
 		buf := bytes.NewBuffer(val)
 		dec := gob.NewDecoder(buf)
-		sub := new(models.SubscriberFeed)
+		sub := new(models.Subscription)
 		if err := dec.Decode(sub); err != nil {
 			logger.Fatal("failed to decode record from store", zap.Error(err))
 			return err

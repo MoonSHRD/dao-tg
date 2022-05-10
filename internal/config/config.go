@@ -13,7 +13,6 @@ type Config struct {
 	fx.Out
 
 	Telegram Telegram
-	Gnosis   Gnosis
 }
 
 // Telegram ...
@@ -21,19 +20,11 @@ type Telegram struct {
 	BotToken string
 }
 
-// Gnosis ...
-type Gnosis struct {
-	Base string
-}
-
 // New Config struct filled from env
 func New() Config {
 	return Config{
 		Telegram: Telegram{
 			BotToken: os.Getenv("BOT_TOKEN"),
-		},
-		Gnosis: Gnosis{
-			Base: os.Getenv("GNOSIS_BASE"),
 		},
 	}
 }
