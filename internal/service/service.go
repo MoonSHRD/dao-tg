@@ -161,9 +161,7 @@ func Process(bot *tg.Bot, client *gnosis.Gnosis, store storage.Store, logger *za
 					menu.Row(btn),
 				)
 
-				c := b.String()
-				log.Println(c)
-				_, err := bot.Send(pocketRecipient{string(key)}, c, &menu, tg.ModeMarkdownV2, tg.NoPreview)
+				_, err := bot.Send(pocketRecipient{string(key)}, b.String(), &menu, tg.ModeMarkdownV2, tg.NoPreview)
 				if err != nil {
 					logger.Warn("failed to send message", zap.Error(err))
 					return err
