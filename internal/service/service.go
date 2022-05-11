@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"fmt"
-	"log"
 	"math/big"
 	"strings"
 	"time"
@@ -97,7 +96,6 @@ func Process(bot *tg.Bot, client *gnosis.Gnosis, store storage.Store, logger *za
 			}
 
 			for _, multisig := range result.Results {
-				log.Println(multisig.Modified.Format(time.RFC3339))
 				recipient.Subscriptions[i].LastUpdated = multisig.Modified.Add(1 * time.Second)
 
 				// Building notification
