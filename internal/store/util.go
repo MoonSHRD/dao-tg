@@ -21,7 +21,7 @@ func FromGob[T any](data []byte) (T, error) {
 func ToGob[T any](value T) ([]byte, error) {
 	buf := &bytes.Buffer{}
 	enc := gob.NewEncoder(buf)
-	if err := enc.Encode("addr"); err != nil {
+	if err := enc.Encode(value); err != nil {
 		return nil, err
 	}
 
