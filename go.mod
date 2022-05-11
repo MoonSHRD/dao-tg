@@ -7,6 +7,7 @@ require (
 	github.com/akrylysov/pogreb v0.10.1
 	github.com/ethereum/go-ethereum v1.10.17
 	github.com/google/go-querystring v1.1.0
+	github.com/shopspring/decimal v1.3.1
 	go.uber.org/fx v1.17.1
 	go.uber.org/zap v1.21.0
 	gopkg.in/telebot.v3 v3.0.0

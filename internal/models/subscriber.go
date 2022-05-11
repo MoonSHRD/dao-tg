@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 // Subscription ...
 type Subscription struct {
 	// Unique label of subscription
@@ -8,6 +10,6 @@ type Subscription struct {
 	Network string `json:"network"`
 	// Address of Gnossis Safe (without prefix, just address)
 	SafeAddress string `json:"safe_address"`
-	// Unix of last event of Safe
-	LastUpdated int64 `json:"last_updated"`
+	// Time when last event happened of Safe
+	LastUpdated time.Time `json:"last_updated"`
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/MoonSHRD/dao-tg/internal/config"
 	"github.com/MoonSHRD/dao-tg/internal/models"
 	storage "github.com/MoonSHRD/dao-tg/internal/store"
+	"github.com/MoonSHRD/dao-tg/pkg/escape"
 	client "github.com/MoonSHRD/dao-tg/pkg/gnosis"
 	"go.uber.org/fx"
 	tg "gopkg.in/telebot.v3"
@@ -82,7 +83,7 @@ func RegisterHandler(b *tg.Bot, gnosis *client.Gnosis, store storage.Store) {
 
 		for _, sub := range recipient.Subscriptions {
 			if label == sub.Label {
-				return ctx.Reply("You already have subscription with name `"+mdEscaper.Replace(sub.Label)+"`", tg.ModeMarkdownV2)
+				return ctx.Reply("You already have subscription with name `"+escape.Markdown.Replace(sub.Label)+"`", tg.ModeMarkdownV2)
 			}
 
 			if network.String() == sub.Network && address == sub.SafeAddress {
@@ -95,7 +96,7 @@ func RegisterHandler(b *tg.Bot, gnosis *client.Gnosis, store storage.Store) {
 			Label:       label,
 			Network:     network.String(),
 			SafeAddress: safeInfo.Address,
-			LastUpdated: time.Now().Unix(),
+			LastUpdated: time.Now(),
 		})
 
 		// Saving
@@ -111,7 +112,7 @@ func RegisterHandler(b *tg.Bot, gnosis *client.Gnosis, store storage.Store) {
 			return ctx.Reply("Failed to subscribe to safe, sorry :(")
 		}
 
-		return ctx.Reply(fmt.Sprintf("Successfully subscribed to *%s*\\!", mdEscaper.Replace(label)), tg.ModeMarkdownV2)
+		return ctx.Reply(fmt.Sprintf("Successfully subscribed to *%s*\\!", escape.Markdown.Replace(label)), tg.ModeMarkdownV2)
 	})
 
 	b.Handle("/subscriptions", func(ctx tg.Context) error {
@@ -142,8 +143,8 @@ func RegisterHandler(b *tg.Bot, gnosis *client.Gnosis, store storage.Store) {
 		var b strings.Builder
 		b.WriteString("List of subscriptions:\n")
 		for _, sub := range recipient.Subscriptions {
-			label := mdEscaper.Replace(sub.Label)
-			lastUpdated := humantime.Since(time.Unix(sub.LastUpdated, 0))
+			label := escape.Markdown.Replace(sub.Label)
+			lastUpdated := humantime.Since(sub.LastUpdated)
 			b.WriteString(fmt.Sprintf("*%s* — Last update was %s\n", label, lastUpdated))
 
 			network := client.Network(sub.Network)
@@ -206,7 +207,7 @@ func RegisterHandler(b *tg.Bot, gnosis *client.Gnosis, store storage.Store) {
 			return ctx.Reply("Failed to unsubscribe from safe, sorry :(")
 		}
 
-		return ctx.Reply(fmt.Sprintf("Successfully unsubscribed from *%s*\\!", mdEscaper.Replace(label)), tg.ModeMarkdownV2)
+		return ctx.Reply(fmt.Sprintf("Successfully unsubscribed from *%s*\\!", escape.Markdown.Replace(label)), tg.ModeMarkdownV2)
 	})
 }
 

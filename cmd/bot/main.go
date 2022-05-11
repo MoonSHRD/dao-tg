@@ -9,6 +9,7 @@ import (
 	"github.com/MoonSHRD/dao-tg/internal/bot"
 	"github.com/MoonSHRD/dao-tg/internal/config"
 	"github.com/MoonSHRD/dao-tg/internal/logger"
+	"github.com/MoonSHRD/dao-tg/internal/service"
 	"github.com/MoonSHRD/dao-tg/internal/store"
 	"github.com/MoonSHRD/dao-tg/pkg/gnosis"
 )
@@ -22,6 +23,7 @@ func main() {
 		gnosis.Module,
 		store.Module,
 		bot.Module,
+		service.Module,
 		fx.WithLogger(func(logger *zap.Logger) fxevent.Logger {
 			return &fxevent.ZapLogger{Logger: logger}
 		}),

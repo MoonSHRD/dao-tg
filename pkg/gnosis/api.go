@@ -190,25 +190,25 @@ type MultisigOptions struct {
 	ExecutionDateLte  *string  `url:"execution_date__lte,omitempty"`
 	Failed            *string  `url:"failed,omitempty"`
 	HasConfirmations  *string  `url:"has_confirmations,omitempty"`
-	ModifiedGt        *string  `url:"modified_gt,omitempty"`
-	ModifiedGte       *string  `url:"modified_gte,omitempty"`
-	ModifiedLt        *string  `url:"modified_lt,omitempty"`
-	ModifiedLte       *string  `url:"modified_lte,omitempty"`
+	ModifiedGt        *string  `url:"modified__gt,omitempty"`
+	ModifiedGte       *string  `url:"modified__gte,omitempty"`
+	ModifiedLt        *string  `url:"modified__lt,omitempty"`
+	ModifiedLte       *string  `url:"modified__lte,omitempty"`
 	Nonce             *float64 `url:"nonce,omitempty"`
-	NonceGt           *float64 `url:"nonce_gt,omitempty"`
-	NonceGte          *float64 `url:"nonce_gte,omitempty"`
-	NonceLt           *float64 `url:"nonce_lt,omitempty"`
-	NonceLte          *float64 `url:"nonce_lte,omitempty"`
+	NonceGt           *float64 `url:"nonce__gt,omitempty"`
+	NonceGte          *float64 `url:"nonce__gte,omitempty"`
+	NonceLt           *float64 `url:"nonce__lt,omitempty"`
+	NonceLte          *float64 `url:"nonce__lte,omitempty"`
 	Ordering          *string  `url:"ordering,omitempty"`
 	SafeTxHash        *string  `url:"safe_tx_hash,omitempty"`
-	SubmissionDateGte *string  `url:"submission_date_gte,omitempty"`
-	SubmissionDateLte *string  `url:"submission_date_lte,omitempty"`
+	SubmissionDateGte *string  `url:"submission_date__gte,omitempty"`
+	SubmissionDateLte *string  `url:"submission_date__lte,omitempty"`
 	To                *string  `url:"to,omitempty"`
 	TransactionHash   *string  `url:"transaction_hash,omitempty"`
 	Trusted           *string  `url:"trusted,omitempty"`
 	Value             *float64 `url:"value,omitempty"`
-	ValueGt           *float64 `url:"value_gt,omitempty"`
-	ValueLt           *float64 `url:"value_lt,omitempty"`
+	ValueGt           *float64 `url:"value__gt,omitempty"`
+	ValueLt           *float64 `url:"value__lt,omitempty"`
 }
 
 func (g *Gnosis) Safe(safeAddress string) (*SafeInfo, error) {

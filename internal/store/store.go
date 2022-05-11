@@ -1,6 +1,7 @@
 package store
 
 import (
+	"context"
 	"time"
 
 	"github.com/akrylysov/pogreb"
@@ -21,7 +22,7 @@ func (s Store) FilterItems(prefix []byte) *FilterItemIterator {
 }
 
 // New ...
-func New() (Store, error) {
+func New(lifecycle fx.Lifecycle) (Store, error) {
 	db, err := pogreb.Open("./pogreb", &pogreb.Options{
 		BackgroundSyncInterval:       -1,
 		BackgroundCompactionInterval: time.Hour,
@@ -29,6 +30,13 @@ func New() (Store, error) {
 	if err != nil {
 		return Store{}, err
 	}
+
+	lifecycle.Append(fx.Hook{
+		OnStop: func(ctx context.Context) error {
+			return db.Close()
+		},
+	})
+
 	return Store{db}, nil
 }
 
