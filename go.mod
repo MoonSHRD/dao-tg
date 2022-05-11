@@ -3,6 +3,7 @@ module github.com/MoonSHRD/dao-tg
 go 1.18
 
 require (
+	github.com/BenJetson/humantime v0.0.0-20200514023344-f59ec2835a87
 	github.com/akrylysov/pogreb v0.10.1
 	github.com/ethereum/go-ethereum v1.10.17
 	github.com/google/go-querystring v1.1.0

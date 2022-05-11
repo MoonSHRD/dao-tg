@@ -20,6 +20,122 @@ var Module = fx.Module("gnosis", fx.Provide(
 	New,
 ))
 
+type Network string
+
+const (
+	EthereumMainnet   Network = "mainnet"
+	GnosisChain       Network = "xdai"
+	Arbitrum          Network = "arbitrum"
+	Avalanche         Network = "avalanche"
+	Aurora            Network = "aurora"
+	BinanceSmartChain Network = "bsc"
+	EnergyWebChain    Network = "ewc"
+	Optimism          Network = "optiprism"
+	Polygon           Network = "polygon"
+	Goerli            Network = "goerli"
+	Rinkeby           Network = "rinkeby"
+	Volta             Network = "volta"
+)
+
+// NetworkFromPrefix creates Network from gnosis chain prefix
+func NetworkFromPrefix(prefix string) (Network, error) {
+	switch prefix {
+	case "eth":
+		return EthereumMainnet, nil
+	case "gno":
+		return GnosisChain, nil
+	case "arbi":
+		return Arbitrum, nil
+	case "avax":
+		return Avalanche, nil
+	case "aurora":
+		return Aurora, nil
+	case "bnb":
+		return BinanceSmartChain, nil
+	case "ewt":
+		return EnergyWebChain, nil
+	case "oeth":
+		return Optimism, nil
+	case "matic":
+		return Polygon, nil
+	case "gor":
+		return Goerli, nil
+	case "rin":
+		return Rinkeby, nil
+	case "vt":
+		return Volta, nil
+	default:
+		return EthereumMainnet, errors.New("no match with prefix")
+	}
+}
+
+// AsPrefix ...
+func (n Network) AsPrefix() string {
+	switch n {
+	case EthereumMainnet:
+		return "eth"
+	case GnosisChain:
+		return "gno"
+	case Arbitrum:
+		return "arbi"
+	case Avalanche:
+		return "avax"
+	case Aurora:
+		return "aurora"
+	case BinanceSmartChain:
+		return "bnb"
+	case EnergyWebChain:
+		return "ewt"
+	case Optimism:
+		return "oeth"
+	case Polygon:
+		return "matic"
+	case Goerli:
+		return "gor"
+	case Rinkeby:
+		return "rin"
+	case Volta:
+		return "vt"
+	default:
+		return string(n)
+	}
+}
+
+func (n Network) Label() string {
+	switch n {
+	case EthereumMainnet:
+		return "Ethereum Mainnet"
+	case GnosisChain:
+		return "Gnosis Chain"
+	case Arbitrum:
+		return "Arbitrum"
+	case Avalanche:
+		return "Avalanche"
+	case Aurora:
+		return "Aurora"
+	case BinanceSmartChain:
+		return "Binance Smart Chain"
+	case EnergyWebChain:
+		return "Energy Web Chain"
+	case Optimism:
+		return "Optiprism"
+	case Polygon:
+		return "Polygon"
+	case Goerli:
+		return "Goerli"
+	case Rinkeby:
+		return "Rinkeby"
+	case Volta:
+		return "Volta"
+	default:
+		return string(n)
+	}
+}
+
+func (n Network) String() string {
+	return string(n)
+}
+
 // DefaultBase ...
 const DefaultBase = "https://safe-transaction.gnosis.io/api/v1"
 
@@ -35,11 +151,17 @@ func New() *Gnosis {
 	}
 }
 
-func (g *Gnosis) WithNetwork(network string) *Gnosis {
-	return &Gnosis{
-		Base:   fmt.Sprintf("https://safe-transaction.%s.gnosis.io/api/v1", network),
-		Client: g.Client,
+// WithNetwork creates new gnosis client with `network` and inherited http client.
+// If `network` is incorrect it returns same client
+func (g *Gnosis) WithNetwork(network Network) *Gnosis {
+	if network != "" {
+		return &Gnosis{
+			Base:   fmt.Sprintf("https://safe-transaction.%s.gnosis.io/api/v1", network),
+			Client: g.Client,
+		}
 	}
+
+	return g
 }
 
 type PaginationOptions struct {
