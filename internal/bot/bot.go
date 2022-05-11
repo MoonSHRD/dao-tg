@@ -84,6 +84,10 @@ func RegisterHandler(b *tg.Bot, gnosis *client.Gnosis, store storage.Store) {
 			if label == sub.Label {
 				return ctx.Reply("You already have subscription with name `"+mdEscaper.Replace(sub.Label)+"`", tg.ModeMarkdownV2)
 			}
+
+			if network.String() == sub.Network && address == sub.SafeAddress {
+				return ctx.Reply("You already have subscription with same address")
+			}
 		}
 
 		// Appending subscription
