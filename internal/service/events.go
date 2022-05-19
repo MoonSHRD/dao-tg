@@ -32,6 +32,7 @@ func (service *Service) ProcessEvents() error {
 		target := newRecipient(string(key))
 		for i, sub := range recipient.Subscriptions {
 			notifications, err := CollectNotifications(sub,
+				service.IncomingTransfersNotifications,
 				service.MultisigTransactionsNotifications,
 			)
 
