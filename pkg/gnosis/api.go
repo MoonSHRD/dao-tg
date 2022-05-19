@@ -171,7 +171,7 @@ type PaginationOptions struct {
 	Offset   *int64 `url:"offset,omitempty"`
 }
 
-type TransactionOptions struct {
+type AllTransactionsOptions struct {
 	PaginationOptions
 	// If `true`` only executed transactions are returned
 	Executed *bool `url:"executed,omitempty"`
@@ -181,6 +181,33 @@ type TransactionOptions struct {
 	// If `true` just trusted transactions are shown (indexed, added by a delegate or with at least one confirmation)
 	// Default: true
 	Trusted *bool `url:"trusted,omitempty"`
+}
+
+type TransfersOptions struct {
+	Limit  *int64 `url:"limit,omitempty"`
+	Offset *int64 `url:"offset,omitempty"`
+
+	BlockNumber   *int64 `url:"block_number,omitempty"`
+	BlockNumberGt *int64 `url:"block_number__gt,omitempty"`
+	BlockNumberLt *int64 `url:"block_number__lt,omitempty"`
+
+	ExecutionDateGt  *string `url:"execution_date__gt,omitempty"`
+	ExecutionDateLt  *string `url:"execution_date__lt,omitempty"`
+	ExecutionDateGte *string `url:"execution_date__gte,omitempty"`
+	ExecutionDateLte *string `url:"execution_date__lte,omitempty"`
+
+	To *string `url:"to,omitempty"`
+
+	TokenAddress    *string `url:"transaction_hash,omitempty"`
+	TransactionHash *string `url:"transaction_hash,omitempty"`
+
+	Value   *float64 `url:"value,omitempty"`
+	ValueGt *float64 `url:"value__gt,omitempty"`
+	ValueLt *float64 `url:"value__lt,omitempty"`
+
+	ERC20  *string `url:"erc20,omitempty"`
+	ERC721 *string `url:"erc721,omitempty"`
+	Ether  *string `url:"ether,omitempty"`
 }
 
 type MultisigOptions struct {
@@ -221,7 +248,22 @@ func (g *Gnosis) Safe(safeAddress string) (*SafeInfo, error) {
 	return result, nil
 }
 
-func (g *Gnosis) Transactions(safeAddress string, options ...TransactionOptions) (*PaginatedResult[Transaction], error) {
+func (g *Gnosis) IncomingTransfers(safeAddress string, options ...TransfersOptions) (*PaginatedResult[Transfer], error) {
+	params, err := values(options...)
+	if err != nil {
+		return nil, err
+	}
+
+	result := new(PaginatedResult[Transfer])
+	url := fmt.Sprintf("%s/safes/%s/incoming-transfers?%s", g.Base, safeAddress, params.Encode())
+	if err = get(g.Client, url, result); err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (g *Gnosis) Transactions(safeAddress string, options ...AllTransactionsOptions) (*PaginatedResult[Transaction], error) {
 	params, err := values(options...)
 	if err != nil {
 		return nil, err

@@ -53,17 +53,23 @@ type MultisigTransaction struct {
 	Signatures            *string        `json:"signatures,omitempty"`
 }
 
+type TransferType string
+
+const (
+	TransferTypeEther TransferType = "ETHER_TRANSFER"
+)
+
 type Transfer struct {
-	Type            string    `json:"type"`
-	ExecutionDate   time.Time `json:"executionDate"`
-	BlockNumber     int64     `json:"blockNumber"`
-	TransactionHash string    `json:"transactionHash"`
-	To              string    `json:"to"`
-	Value           string    `json:"value"`
-	TokenID         *string   `json:"tokenId"`
-	TokenAddress    *string   `json:"tokenAddress"`
-	TokenInfo       *string   `json:"tokenInfo"`
-	From            string    `json:"from"`
+	Type            TransferType `json:"type"`
+	ExecutionDate   time.Time    `json:"executionDate"`
+	BlockNumber     int64        `json:"blockNumber"`
+	TransactionHash string       `json:"transactionHash"`
+	To              string       `json:"to"`
+	Value           string       `json:"value"`
+	TokenID         *string      `json:"tokenId"`
+	TokenAddress    *string      `json:"tokenAddress"`
+	TokenInfo       *string      `json:"tokenInfo"`
+	From            string       `json:"from"`
 }
 
 type TxType string
