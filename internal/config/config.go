@@ -24,7 +24,7 @@ type Telegram struct {
 func New() Config {
 	return Config{
 		Telegram: Telegram{
-			BotToken: os.Getenv("BOT_TOKEN"),
+			BotToken: EnvNonEmpty("BOT_TOKEN"),
 		},
 	}
 }
@@ -36,6 +36,15 @@ func StringToInt(value string) int {
 		log.Fatal(err)
 	}
 	return i
+}
+
+// EnvNonEmpty panics if env variable is empty or none
+func EnvNonEmpty(variable string) string {
+	value := os.Getenv(variable)
+	if len(value) == 0 {
+		log.Fatalf(`env variable "%s" not provided`, variable)
+	}
+	return value
 }
 
 // Module ...
