@@ -212,30 +212,30 @@ type TransfersOptions struct {
 
 type MultisigOptions struct {
 	PaginationOptions
-	Executed          *bool    `url:"executed,omitempty"`
-	ExecutionDateGte  *string  `url:"execution_date__gte,omitempty"`
-	ExecutionDateLte  *string  `url:"execution_date__lte,omitempty"`
-	Failed            *string  `url:"failed,omitempty"`
-	HasConfirmations  *string  `url:"has_confirmations,omitempty"`
-	ModifiedGt        *string  `url:"modified__gt,omitempty"`
-	ModifiedGte       *string  `url:"modified__gte,omitempty"`
-	ModifiedLt        *string  `url:"modified__lt,omitempty"`
-	ModifiedLte       *string  `url:"modified__lte,omitempty"`
-	Nonce             *float64 `url:"nonce,omitempty"`
-	NonceGt           *float64 `url:"nonce__gt,omitempty"`
-	NonceGte          *float64 `url:"nonce__gte,omitempty"`
-	NonceLt           *float64 `url:"nonce__lt,omitempty"`
-	NonceLte          *float64 `url:"nonce__lte,omitempty"`
-	Ordering          *string  `url:"ordering,omitempty"`
-	SafeTxHash        *string  `url:"safe_tx_hash,omitempty"`
-	SubmissionDateGte *string  `url:"submission_date__gte,omitempty"`
-	SubmissionDateLte *string  `url:"submission_date__lte,omitempty"`
-	To                *string  `url:"to,omitempty"`
-	TransactionHash   *string  `url:"transaction_hash,omitempty"`
-	Trusted           *string  `url:"trusted,omitempty"`
-	Value             *float64 `url:"value,omitempty"`
-	ValueGt           *float64 `url:"value__gt,omitempty"`
-	ValueLt           *float64 `url:"value__lt,omitempty"`
+	Executed          *bool   `url:"executed,omitempty"`
+	ExecutionDateGte  *string `url:"execution_date__gte,omitempty"`
+	ExecutionDateLte  *string `url:"execution_date__lte,omitempty"`
+	Failed            *string `url:"failed,omitempty"`
+	HasConfirmations  *string `url:"has_confirmations,omitempty"`
+	ModifiedGt        *string `url:"modified__gt,omitempty"`
+	ModifiedGte       *string `url:"modified__gte,omitempty"`
+	ModifiedLt        *string `url:"modified__lt,omitempty"`
+	ModifiedLte       *string `url:"modified__lte,omitempty"`
+	Nonce             *int64  `url:"nonce,omitempty"`
+	NonceGt           *int64  `url:"nonce__gt,omitempty"`
+	NonceGte          *int64  `url:"nonce__gte,omitempty"`
+	NonceLt           *int64  `url:"nonce__lt,omitempty"`
+	NonceLte          *int64  `url:"nonce__lte,omitempty"`
+	Ordering          *string `url:"ordering,omitempty"`
+	SafeTxHash        *string `url:"safe_tx_hash,omitempty"`
+	SubmissionDateGte *string `url:"submission_date__gte,omitempty"`
+	SubmissionDateLte *string `url:"submission_date__lte,omitempty"`
+	To                *string `url:"to,omitempty"`
+	TransactionHash   *string `url:"transaction_hash,omitempty"`
+	Trusted           *string `url:"trusted,omitempty"`
+	Value             *int64  `url:"value,omitempty"`
+	ValueGt           *int64  `url:"value__gt,omitempty"`
+	ValueLt           *int64  `url:"value__lt,omitempty"`
 }
 
 func (g *Gnosis) Safe(safeAddress string) (*SafeInfo, error) {
