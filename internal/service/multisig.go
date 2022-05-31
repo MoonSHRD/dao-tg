@@ -199,6 +199,11 @@ func (service *Service) FormatMultisigTransactions(subscription models.Subscript
 			service.logger.Error("failed to get overlapping multisignature transactions", zap.Int64("nonce", multisig.Nonce), zap.Error(err))
 		}
 
+		if multisig.Data != nil {
+			b.WriteByte('\n')
+			b.WriteString("There is ***Actions*** performed in this multisig, details:")
+		}
+
 		// Adding url button to transaction for fast access to confirmation
 		menu := tg.ReplyMarkup{}
 		btn := menu.URL("Gnosis",
