@@ -79,14 +79,13 @@ func (service *Service) FormatMultisigTransactions(subscription models.Subscript
 
 		// Is it new multisignature transaction?
 		// When add "proposed by" to header
-		// ! DOESNT WORK PROPERLY
-		// ? Maybe round to seconds
-		isNew := multisig.SubmissionDate.Equal(multisig.Modified)
+		isNew := len(multisig.Confirmations) == 1
+		isRejection := !isOutcoming && len(confictMultisig.Results) > 0
 		if isNew {
 			proposedBy := multisig.Confirmations[0].Owner
 			link := escape.Markdown.Replace(gnosis.ExplorerLink(network, proposedBy))
-			if !isOutcoming && len(confictMultisig.Results) > 0 {
-				b.WriteString("On-chain rejection proposed by:\n")
+			if isRejection {
+				b.WriteString(escape.Markdown.Replace("On-chain rejection proposed by:\n"))
 			} else {
 				b.WriteString("Proposed by:\n")
 			}
@@ -94,6 +93,7 @@ func (service *Service) FormatMultisigTransactions(subscription models.Subscript
 			b.WriteByte('\n')
 		}
 
+		service.logger.Info("rej", zap.Int("results", len(confictMultisig.Results)))
 		service.logger.Info("tm", zap.Time("s", multisig.SubmissionDate), zap.Time("m", multisig.Modified))
 		service.logger.Info("is", zap.Bool("new", isNew), zap.Bool("out", isOutcoming))
 
@@ -126,26 +126,25 @@ func (service *Service) FormatMultisigTransactions(subscription models.Subscript
 			b.WriteString("Multisignature in *" + subscription.Label + "*\n")
 		}
 
-		b.WriteByte('\n')
-
 		// Checking status, is it executed, is all confirmations collected?
 		remain := safe.Threshold - int64(len(multisig.Confirmations))
 		thresholdReached := remain == 0
 		if multisig.ConfirmationsRequired == nil {
+			b.WriteByte('\n')
 			if thresholdReached {
 				b.WriteString("*Execution needed*\n")
 			} else {
 				b.WriteString(fmt.Sprintf("*Confirmations Required* — %d more\n", remain))
 			}
 		} else {
+			b.WriteByte('\n')
 			b.WriteString("*Executed by:*\n")
 			link := escape.Markdown.Replace(gnosis.ExplorerLink(network, *multisig.Executor))
 			b.WriteString(fmt.Sprintf("[%s](%s)\n", *multisig.Executor, link))
 		}
 
-		b.WriteByte('\n')
-
 		if !isNew {
+			b.WriteByte('\n')
 			b.WriteString("Confirmations:\n")
 			for _, conf := range multisig.Confirmations {
 				link := escape.Markdown.Replace(gnosis.ExplorerLink(network, conf.Owner))
